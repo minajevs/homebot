@@ -1,0 +1,24 @@
+[Unit]
+Description=Home Telegram Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=homebot
+Group=homebot
+WorkingDirectory=/opt/homebot/app
+EnvironmentFile=/etc/homebot/homebot.env
+ExecStart=/usr/bin/node /opt/homebot/app/dist/index.js
+Restart=always
+RestartSec=5
+
+# Basic hardening. Keep /opt/homebot writable only if your future bot needs it.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/homebot/app
+
+[Install]
+WantedBy=multi-user.target
