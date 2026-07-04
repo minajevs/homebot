@@ -13,6 +13,7 @@ NODE_MAJOR="${NODE_MAJOR:-24}"
 APP_USER="${APP_USER:-homebot}"
 APP_HOME="/opt/homebot"
 APP_DIR="${APP_HOME}/app"
+DATA_DIR="${APP_HOME}/data"
 ENV_DIR="/etc/homebot"
 ENV_FILE="${ENV_DIR}/homebot.env"
 
@@ -30,7 +31,7 @@ echo ">> Node: $(node -v),  npm: $(npm -v)"
 echo ">> Creating service user ${APP_USER}"
 id -u "${APP_USER}" >/dev/null 2>&1 || \
   useradd --system --home "${APP_HOME}" --shell /usr/sbin/nologin "${APP_USER}"
-mkdir -p "${APP_DIR}" "${ENV_DIR}"
+mkdir -p "${APP_DIR}" "${DATA_DIR}" "${ENV_DIR}"
 chown -R "${APP_USER}:${APP_USER}" "${APP_HOME}"
 
 echo ">> Fetching source into ${APP_DIR}"
@@ -51,7 +52,10 @@ if [[ ! -f "${ENV_FILE}" ]]; then
   cat > "${ENV_FILE}" <<'EOF'
 TELEGRAM_BOT_TOKEN=replace-with-real-token
 ALLOWED_USER_IDS=
-PRIVATE_CHAT_ONLY=true
+ALLOWED_CHAT_IDS=
+RAIN_DATA_FILE=/opt/homebot/data/rain.json
+RAIN_REMINDER=saturday 09:00
+TZ=Europe/Riga
 BOT_NAME=HomeBot
 EOF
 fi
@@ -69,4 +73,7 @@ echo "  1. Edit ${ENV_FILE} and set TELEGRAM_BOT_TOKEN."
 echo "  2. systemctl start homebot"
 echo "  3. Message /whoami to the bot, copy your ID into ALLOWED_USER_IDS,"
 echo "     then: systemctl restart homebot"
+echo "  4. For the rain tally: disable the bot's group privacy mode via @BotFather"
+echo "     (/setprivacy -> Disable), add the bot to your group, run /chatid there,"
+echo "     copy the ID into ALLOWED_CHAT_IDS, then: systemctl restart homebot"
 echo "  Logs: journalctl -u homebot -f"

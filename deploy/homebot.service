@@ -18,7 +18,8 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/homebot/app
+# /opt/homebot/data holds the rain readings, outside the app dir so git operations never touch it.
+ReadWritePaths=/opt/homebot/app /opt/homebot/data
 
 [Install]
 WantedBy=multi-user.target
